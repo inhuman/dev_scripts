@@ -1,0 +1,32 @@
+#!/bin/bash
+
+GO_LINKS_DIR=$HOME/go-links
+GO_MOD_FILE=go.mod
+
+echo "Creating module link to ${GO_LINKS_DIR}"
+if [ -d "$GO_LINKS_DIR" ]; then
+  echo "${GO_LINKS_DIR} found."
+else
+  echo "${GO_LINKS_DIR} not found. Creating."
+  mkdir -p "$GO_LINKS_DIR"
+fi
+
+echo "Search go module file ${GO_MOD_FILE}"
+
+if [ -f "$GO_MOD_FILE" ]; then
+  echo "${GO_MOD_FILE} found, parsing."
+else
+  echo "${GO_MOD_FILE} not found. Exiting."
+  exit 1
+fi
+
+MODULE_NAME=$(cat $GO_MOD_FILE | grep module | awk '{print $2}')
+echo "Detected module name: ${MODULE_NAME}"
+
+GO_LINKS_MODULE=$GO_LINKS_DIR/$MODULE_NAME
+echo "Linking module to  ${GO_LINKS_MODULE}"
+
+rm -rf $GO_LINKS_MODULE
+mkdir -p $(dirname $GO_LINKS_MODULE)
+
+ln -sf $PWD $GO_LINKS_MODULE
